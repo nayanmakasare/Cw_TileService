@@ -1,0 +1,403 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "TileService.proto",
+    "version": "version not set"
+  },
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/carousel/{vendor}/{brand}/{pageName}": {
+      "get": {
+        "operationId": "GetCarousel",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/TileServiceCarouselResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "vendor",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "brand",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "pageName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "TileService"
+        ]
+      }
+    },
+    "/cloudwalkerPrimePages/{vendor}/{brand}": {
+      "get": {
+        "operationId": "CloudwalkerPrimePages",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/TileServiceCloudwalkerSchedule"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "vendor",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "brand",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "TileService"
+        ]
+      }
+    },
+    "/content/{vendor}/{brand}/{pageName}/{rowName}": {
+      "get": {
+        "operationId": "GetContent",
+        "responses": {
+          "200": {
+            "description": "A successful response.(streaming responses)",
+            "schema": {
+              "$ref": "#/x-stream-definitions/TileServiceContentTile"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "vendor",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "brand",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "pageName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "rowName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "TileService"
+        ]
+      }
+    },
+    "/page/{vendor}/{brand}/{pageName}": {
+      "get": {
+        "operationId": "GetPage",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/TileServicePageResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "vendor",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "brand",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "pageName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "TileService"
+        ]
+      }
+    },
+    "/row/{vendor}/{brand}/{pageName}/{rowName}": {
+      "get": {
+        "operationId": "GetRow",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/TileServiceRowResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "vendor",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "brand",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "pageName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "rowName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "TileService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "TileServiceCarousel": {
+      "type": "object",
+      "properties": {
+        "imageUrl": {
+          "type": "string"
+        },
+        "target": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "packageName": {
+          "type": "string"
+        }
+      }
+    },
+    "TileServiceCarouselResponse": {
+      "type": "object",
+      "properties": {
+        "carousel": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TileServiceCarousel"
+          }
+        },
+        "carouselBaseUrl": {
+          "type": "string"
+        }
+      }
+    },
+    "TileServiceCloudwalkerSchedule": {
+      "type": "object",
+      "properties": {
+        "pages": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TileServicePage"
+          }
+        }
+      },
+      "title": "Prime Pages"
+    },
+    "TileServiceContentTile": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "mediaUrl": {
+          "type": "string"
+        },
+        "tileType": {
+          "$ref": "#/definitions/TileServiceTileType"
+        },
+        "poster": {
+          "type": "string"
+        },
+        "portrait": {
+          "type": "string"
+        },
+        "isDetailPage": {
+          "type": "boolean",
+          "format": "boolean"
+        },
+        "packageName": {
+          "type": "string"
+        },
+        "contentId": {
+          "type": "string"
+        },
+        "target": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "realeaseDate": {
+          "type": "string"
+        }
+      }
+    },
+    "TileServicePage": {
+      "type": "object",
+      "properties": {
+        "pageName": {
+          "type": "string"
+        },
+        "pageEndpoint": {
+          "type": "string"
+        }
+      }
+    },
+    "TileServicePageResponse": {
+      "type": "object",
+      "properties": {
+        "carouselEndpoint": {
+          "type": "string"
+        },
+        "rowContentEndpoint": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "TileServiceRowLayout": {
+      "type": "string",
+      "enum": [
+        "Landscape",
+        "Portrait",
+        "Square",
+        "Circle"
+      ],
+      "default": "Landscape"
+    },
+    "TileServiceRowResponse": {
+      "type": "object",
+      "properties": {
+        "rowName": {
+          "type": "string"
+        },
+        "rowLayout": {
+          "$ref": "#/definitions/TileServiceRowLayout"
+        },
+        "contentBaseUrl": {
+          "type": "string"
+        },
+        "contentTiles": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TileServiceContentTile"
+          }
+        }
+      }
+    },
+    "TileServiceTileType": {
+      "type": "string",
+      "enum": [
+        "ImageTile",
+        "VideoTile",
+        "FeatureTile",
+        "AdvertiseTile",
+        "CarouselTile"
+      ],
+      "default": "ImageTile",
+      "title": "Row Request"
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "type_url": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    },
+    "runtimeStreamError": {
+      "type": "object",
+      "properties": {
+        "grpc_code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "http_code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "http_status": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    }
+  },
+  "x-stream-definitions": {
+    "TileServiceContentTile": {
+      "type": "object",
+      "properties": {
+        "result": {
+          "$ref": "#/definitions/TileServiceContentTile"
+        },
+        "error": {
+          "$ref": "#/definitions/runtimeStreamError"
+        }
+      },
+      "title": "Stream result of TileServiceContentTile"
+    }
+  }
+}
