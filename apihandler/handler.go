@@ -52,6 +52,7 @@ func(s *Server) CloudwalkerPrimePages(ctx context.Context, request *pb.PrimePage
 }
 
 func (s *Server) GetPage(ctx context.Context, request *pb.PageRequest)(*pb.PageResponse, error)  {
+
 	redisKey := fmt.Sprintf("%s:%s:%s", strings.ToLower(request.GetVendor()), strings.ToLower(request.GetBrand()), strings.ToLower(request.GetPageName()))
 	if s.checkInRedis(redisKey) {
 		result, err := s.RedisConnection.SMembers(redisKey).Result()
@@ -73,7 +74,6 @@ func (s *Server) GetCarousel(ctx context.Context, request *pb.CarouselRequest) (
 
 	redisKey := fmt.Sprintf("%s:%s:%s:carousel", strings.ToLower(request.GetVendor()), strings.ToLower(request.GetBrand()), strings.ToLower(request.GetPageName()))
 	if s.checkInRedis(redisKey) {
-
 		result, err := s.RedisConnection.SMembers(redisKey).Result()
 		if err != nil {
 			return nil, status.Error(codes.Unavailable, fmt.Sprintf("Failed to get Result from Cache ", err))
@@ -84,7 +84,9 @@ func (s *Server) GetCarousel(ctx context.Context, request *pb.CarouselRequest) (
 			var response pb.Carousel
 			err = proto.Unmarshal([]byte(value), &response)
 			if err != nil {
-				return nil, status.Error(codes.Internal, fmt.Sprintf("Failed to unMarshal result ", err))
+				log.Println(err)
+				continue
+				//return nil, status.Error(codes.Internal, fmt.Sprintf("Failed to unMarshal result ", err))
 			}
 			carouselResponse.Carousel = append(carouselResponse.Carousel, &response)
 		}
@@ -133,7 +135,8 @@ func (s *Server) GetRow(ctx context.Context,  request *pb.RowRequest) (*pb.RowRe
 					var contentTile pb.ContentTile
 					err = proto.Unmarshal([]byte(v), &contentTile)
 					if err != nil {
-						return nil, status.Error(codes.Internal, fmt.Sprintf("Failed to unMarshal result ", err))
+						log.Println(err)
+						continue
 					}
 					response.ContentTiles = append(response.ContentTiles, &contentTile)
 				}
@@ -144,67 +147,6 @@ func (s *Server) GetRow(ctx context.Context,  request *pb.RowRequest) (*pb.RowRe
 	}else {
 		return nil, status.Error(codes.DataLoss, fmt.Sprintf("Data not found on cache "))
 	}
-
-
-
-	//log.Println("getRows 1   "+req.RowId)
-	//var rowResp pb.RowResponse
-	//
-	//infoSet := strings.Split(req.RowId, "-")
-	//
-	//rowResp.RowName = strings.Replace(infoSet[1], "_", " ", -1)
-	//
-	//result, err := s.RedisConnection.SMembers(fmt.Sprintf("%s-%s-rowLayout",infoSet[0], infoSet[1])).Result()
-	//if err != nil {
-	//	return nil, err
-	//}
-	//rowResp.RowLayout = result[0]
-	//
-	//baseUrlResult, err := s.RedisConnection.SMembers(fmt.Sprintf("%s-row-baseurl", infoSet[0])).Result()
-	//if err != nil {
-	//	log.Println("getRows 4")
-	//	return nil, err
-	//}
-	//rowResp.ContentBaseUrl = baseUrlResult[0]
-	//
-	//
-	//var nextCursor uint64
-	//var wg sync.WaitGroup
-	//for {
-	//	//result, serverCursor, err := s.RedisConnection.SScan(req.RowId, nextCursor, "", chunkDataCount).Result()
-	//	result, serverCursor, err := s.RedisConnection.SScan(req.RowId, nextCursor, "", 300).Result()
-	//	if err != nil {
-	//		log.Println("getRows 5")
-	//		return nil, err
-	//	}
-	//	nextCursor = serverCursor
-	//	wg.Add(1)
-	//
-	//	go func(redisConn *redis.Client) error {
-	//
-	//		for _, k := range result {
-	//			//Important lesson, challenge was to convert interface{} to byte. used  ([]byte(k.(string)))
-	//			var movieTile pb.ContentTile
-	//			err = proto.UnmarshalText(k, &movieTile)
-	//			//err = proto.Unmarshal(([]byte(k.(string))), &movieTile)
-	//			if err != nil {
-	//				log.Println("getRows 6")
-	//				return err
-	//			}
-	//			rowResp.ContentTile = append(rowResp.ContentTile, &movieTile)
-	//		}
-	//		wg.Done()
-	//		return nil
-	//	}(s.RedisConnection)
-	//
-	//	wg.Wait()
-	//	if serverCursor == 0 {
-	//		break
-	//	}
-	//}
-	//return &rowResp, nil
-	//
-	//return  nil, nil
 }
 
 
@@ -251,3 +193,66 @@ func(s *Server) GetContent(request *pb.RowRequest, stream pb.TileService_GetCont
 		return status.Error(codes.DataLoss, fmt.Sprintf("Data not found on cache "))
 	}
 }
+
+
+
+
+//TODO GOLD
+//log.Println("getRows 1   "+req.RowId)
+//var rowResp pb.RowResponse
+//
+//infoSet := strings.Split(req.RowId, "-")
+//
+//rowResp.RowName = strings.Replace(infoSet[1], "_", " ", -1)
+//
+//result, err := s.RedisConnection.SMembers(fmt.Sprintf("%s-%s-rowLayout",infoSet[0], infoSet[1])).Result()
+//if err != nil {
+//	return nil, err
+//}
+//rowResp.RowLayout = result[0]
+//
+//baseUrlResult, err := s.RedisConnection.SMembers(fmt.Sprintf("%s-row-baseurl", infoSet[0])).Result()
+//if err != nil {
+//	log.Println("getRows 4")
+//	return nil, err
+//}
+//rowResp.ContentBaseUrl = baseUrlResult[0]
+//
+//
+//var nextCursor uint64
+//var wg sync.WaitGroup
+//for {
+//	//result, serverCursor, err := s.RedisConnection.SScan(req.RowId, nextCursor, "", chunkDataCount).Result()
+//	result, serverCursor, err := s.RedisConnection.SScan(req.RowId, nextCursor, "", 300).Result()
+//	if err != nil {
+//		log.Println("getRows 5")
+//		return nil, err
+//	}
+//	nextCursor = serverCursor
+//	wg.Add(1)
+//
+//	go func(redisConn *redis.Client) error {
+//
+//		for _, k := range result {
+//			//Important lesson, challenge was to convert interface{} to byte. used  ([]byte(k.(string)))
+//			var movieTile pb.ContentTile
+//			err = proto.UnmarshalText(k, &movieTile)
+//			//err = proto.Unmarshal(([]byte(k.(string))), &movieTile)
+//			if err != nil {
+//				log.Println("getRows 6")
+//				return err
+//			}
+//			rowResp.ContentTile = append(rowResp.ContentTile, &movieTile)
+//		}
+//		wg.Done()
+//		return nil
+//	}(s.RedisConnection)
+//
+//	wg.Wait()
+//	if serverCursor == 0 {
+//		break
+//	}
+//}
+//return &rowResp, nil
+//
+//return  nil, nil

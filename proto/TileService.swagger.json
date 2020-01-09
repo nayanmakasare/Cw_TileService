@@ -2,7 +2,7 @@
   "swagger": "2.0",
   "info": {
     "title": "TileService.proto",
-    "version": "version not set"
+    "version": "1.0.0"
   },
   "consumes": [
     "application/json"
@@ -18,7 +18,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/TileServiceCarouselResponse"
+              "$ref": "#/definitions/Cw_TileServiceCarouselResponse"
             }
           }
         },
@@ -54,7 +54,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/TileServiceCloudwalkerSchedule"
+              "$ref": "#/definitions/Cw_TileServiceCloudwalkerSchedule"
             }
           }
         },
@@ -84,7 +84,7 @@
           "200": {
             "description": "A successful response.(streaming responses)",
             "schema": {
-              "$ref": "#/x-stream-definitions/TileServiceContentTile"
+              "$ref": "#/x-stream-definitions/Cw_TileServiceContentTile"
             }
           }
         },
@@ -126,7 +126,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/TileServicePageResponse"
+              "$ref": "#/definitions/Cw_TileServicePageResponse"
             }
           }
         },
@@ -162,7 +162,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/TileServiceRowResponse"
+              "$ref": "#/definitions/Cw_TileServiceRowResponse"
             }
           }
         },
@@ -199,7 +199,7 @@
     }
   },
   "definitions": {
-    "TileServiceCarousel": {
+    "Cw_TileServiceCarousel": {
       "type": "object",
       "properties": {
         "imageUrl": {
@@ -216,13 +216,13 @@
         }
       }
     },
-    "TileServiceCarouselResponse": {
+    "Cw_TileServiceCarouselResponse": {
       "type": "object",
       "properties": {
         "carousel": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/TileServiceCarousel"
+            "$ref": "#/definitions/Cw_TileServiceCarousel"
           }
         },
         "carouselBaseUrl": {
@@ -230,19 +230,19 @@
         }
       }
     },
-    "TileServiceCloudwalkerSchedule": {
+    "Cw_TileServiceCloudwalkerSchedule": {
       "type": "object",
       "properties": {
         "pages": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/TileServicePage"
+            "$ref": "#/definitions/Cw_TileServicePage"
           }
         }
       },
       "title": "Prime Pages"
     },
-    "TileServiceContentTile": {
+    "Cw_TileServiceContentTile": {
       "type": "object",
       "properties": {
         "title": {
@@ -252,7 +252,7 @@
           "type": "string"
         },
         "tileType": {
-          "$ref": "#/definitions/TileServiceTileType"
+          "$ref": "#/definitions/Cw_TileServiceTileType"
         },
         "poster": {
           "type": "string"
@@ -281,7 +281,7 @@
         }
       }
     },
-    "TileServicePage": {
+    "Cw_TileServicePage": {
       "type": "object",
       "properties": {
         "pageName": {
@@ -292,7 +292,7 @@
         }
       }
     },
-    "TileServicePageResponse": {
+    "Cw_TileServicePageResponse": {
       "type": "object",
       "properties": {
         "carouselEndpoint": {
@@ -306,7 +306,7 @@
         }
       }
     },
-    "TileServiceRowLayout": {
+    "Cw_TileServiceRowLayout": {
       "type": "string",
       "enum": [
         "Landscape",
@@ -316,14 +316,14 @@
       ],
       "default": "Landscape"
     },
-    "TileServiceRowResponse": {
+    "Cw_TileServiceRowResponse": {
       "type": "object",
       "properties": {
         "rowName": {
           "type": "string"
         },
         "rowLayout": {
-          "$ref": "#/definitions/TileServiceRowLayout"
+          "$ref": "#/definitions/Cw_TileServiceRowLayout"
         },
         "contentBaseUrl": {
           "type": "string"
@@ -331,12 +331,12 @@
         "contentTiles": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/TileServiceContentTile"
+            "$ref": "#/definitions/Cw_TileServiceContentTile"
           }
         }
       }
     },
-    "TileServiceTileType": {
+    "Cw_TileServiceTileType": {
       "type": "string",
       "enum": [
         "ImageTile",
@@ -387,17 +387,17 @@
     }
   },
   "x-stream-definitions": {
-    "TileServiceContentTile": {
+    "Cw_TileServiceContentTile": {
       "type": "object",
       "properties": {
         "result": {
-          "$ref": "#/definitions/TileServiceContentTile"
+          "$ref": "#/definitions/Cw_TileServiceContentTile"
         },
         "error": {
           "$ref": "#/definitions/runtimeStreamError"
         }
       },
-      "title": "Stream result of TileServiceContentTile"
+      "title": "Stream result of Cw_TileServiceContentTile"
     }
   }
 }

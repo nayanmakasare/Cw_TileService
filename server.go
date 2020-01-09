@@ -1,7 +1,8 @@
 package main
 
 import (
-	"TileService/apihandler"
+	"Cw_TileService/apihandler"
+	pb "Cw_TileService/proto"
 	"context"
 	"fmt"
 	codecs "github.com/amsokol/mongo-go-driver-protobuf"
@@ -13,7 +14,6 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/metadata"
-	pb "TileService/proto"
 	"log"
 	"net"
 	"net/http"
@@ -22,10 +22,10 @@ import (
 )
 
 const (
-	defaultHost          = "mongodb://nayan:tlwn722n@cluster0-shard-00-00-8aov2.mongodb.net:27017,cluster0-shard-00-01-8aov2.mongodb.net:27017,cluster0-shard-00-02-8aov2.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true&w=majority"
+	//defaultHost          = "mongodb://nayan:tlwn722n@cluster0-shard-00-00-8aov2.mongodb.net:27017,cluster0-shard-00-01-8aov2.mongodb.net:27017,cluster0-shard-00-02-8aov2.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true&w=majority"
 	schedularMongoHost = "mongodb://192.168.1.143:27017"
-	schedularRedisHost = "192.168.1.143:6379"
-	developmentMongo = "192.168.1.9:27017"
+	schedularRedisHost = "redis:6379"
+	developmentMongo = "mongodb://dev-uni.cloudwalker.tv:6592"
 )
 
 // private type for Context keys
@@ -59,7 +59,6 @@ func authenticateClient(ctx context.Context, s *apihandler.Server) (string, erro
 	return "", fmt.Errorf("missing credentials")
 }
 
-
 func unaryInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
 	s, ok := info.Server.(*apihandler.Server)
 	if !ok {
@@ -73,7 +72,6 @@ func unaryInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServ
 	return handler(ctx, req)
 }
 
-
 func startGRPCServer(address, certFile, keyFile string) error {
 	// create a listener on TCP port
 	lis, err := net.Listen("tcp", address)
@@ -81,7 +79,7 @@ func startGRPCServer(address, certFile, keyFile string) error {
 		return fmt.Errorf("failed to listen: %v", err)
 	}  // create a server instance
 	s := apihandler.Server{
-		getMongoVendorCollection("cloudwalker", "schedule", defaultHost),
+		getMongoVendorCollection("cloudwalker", "schedule", developmentMongo),
 		getRedisClient(schedularRedisHost),
 	}  // Create the TLS credentials
 	creds, err := credentials.NewServerTLSFromFile(certFile, keyFile)
@@ -165,8 +163,8 @@ func main()  {
 	//grpcAddress := fmt.Sprintf("%s:%d", "cloudwalker.services.tv", 7771)
 	//restAddress := fmt.Sprintf("%s:%d", "cloudwalker.services.tv", 7772)
 
-	grpcAddress := fmt.Sprintf("%s:%d", "192.168.1.143", 7773)
-	restAddress := fmt.Sprintf("%s:%d", "192.168.1.143", 7774)
+	grpcAddress := fmt.Sprintf(":%d", 7773)
+	restAddress := fmt.Sprintf(":%d", 7774)
 	certFile := "cert/server.crt"
 	keyFile := "cert/server.key"
 

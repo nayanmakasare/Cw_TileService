@@ -1,7 +1,7 @@
 package main
 
 import (
-	pb "TileService/proto"
+	pb "Cw_TileService/proto"
 	"context"
 	"google.golang.org/grpc"
 	"log"
@@ -60,10 +60,10 @@ func main(){
 
 	wg.Add(run_test_index)
 	for i:=0 ; i < run_test_index ; i++ {
-		//go CloudwalkerPrimePages(c, &wg)
+		go CloudwalkerPrimePages(c, &wg)
 		//go GetPage(c, &wg)
 		//go GetCarousel(c, &wg)
-		go GetRow(c, &wg)
+		//go GetRow(c, &wg)
 	}
 	wg.Wait()
 }
