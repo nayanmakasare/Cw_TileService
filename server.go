@@ -12,7 +12,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/metadata"
 	"log"
 	"net"
@@ -24,8 +23,8 @@ import (
 const (
 	//defaultHost          = "mongodb://nayan:tlwn722n@cluster0-shard-00-00-8aov2.mongodb.net:27017,cluster0-shard-00-01-8aov2.mongodb.net:27017,cluster0-shard-00-02-8aov2.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true&w=majority"
 	schedularMongoHost = "mongodb://192.168.1.143:27017"
-	schedularRedisHost = "redis:6379"
-	developmentMongo = "mongodb://dev-uni.cloudwalker.tv:6592"
+	schedularRedisHost = ":6379"
+	developmentMongo   = "mongodb://dev-uni.cloudwalker.tv:6592"
 )
 
 // private type for Context keys
@@ -64,7 +63,7 @@ func unaryInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServ
 	if !ok {
 		return nil, fmt.Errorf("unable to cast the server")
 	}
-	clientID , err := authenticateClient(ctx, s)
+	clientID, err := authenticateClient(ctx, s)
 	if err != nil {
 		return nil, err
 	}
@@ -72,59 +71,36 @@ func unaryInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServ
 	return handler(ctx, req)
 }
 
-func startGRPCServer(address, certFile, keyFile string) error {
+func startGRPCServer(address string) error {
+
 	// create a listener on TCP port
 	lis, err := net.Listen("tcp", address)
 	if err != nil {
 		return fmt.Errorf("failed to listen: %v", err)
-	}  // create a server instance
+	} // create a server instance
 	s := apihandler.Server{
 		getMongoVendorCollection("cloudwalker", "schedule", developmentMongo),
 		getRedisClient(schedularRedisHost),
-	}  // Create the TLS credentials
-	creds, err := credentials.NewServerTLSFromFile(certFile, keyFile)
-	if err != nil {
-		return fmt.Errorf("could not load TLS keys: %s", err)
-	}  // Create an array of gRPC options with the credentials
+	}
 
-
-
-	//opts := []grpc.ServerOption{grpc.Creds(creds), grpc.UnaryInterceptor(unaryInterceptor)}
-	_ = []grpc.ServerOption{grpc.Creds(creds), grpc.UnaryInterceptor(unaryInterceptor)}
-
-
-
-	// create a gRPC server object
-	//grpcServer := grpc.NewServer(opts...)  // attach the Ping service to the server
-
-
-
-	grpcServer := grpc.NewServer()  // attach the Ping service to the server
-	pb.RegisterTileServiceServer(grpcServer, &s)  // start the server
-	log.Printf("starting HTTP/2 gRPC server on %s", address)
+	grpcServer := grpc.NewServer()               // attach the Ping service to the server
+	pb.RegisterTileServiceServer(grpcServer, &s) // start the server
+	//log.Printf("starting HTTP/2 gRPC server on %s", address)
 	if err := grpcServer.Serve(lis); err != nil {
 		return fmt.Errorf("failed to serve: %s", err)
 	}
 	return nil
 }
 
-func startRESTServer(address, grpcAddress, certFile string) error {
+func startRESTServer(address, grpcAddress string) error {
 	ctx := context.Background()
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 	mux := runtime.NewServeMux(runtime.WithIncomingHeaderMatcher(credMatcher))
 
+	opts := []grpc.DialOption{grpc.WithInsecure()} // Register ping
 
-	_ , err := credentials.NewClientTLSFromFile(certFile, "")
-	if err != nil {
-		return fmt.Errorf("could not load TLS certificate: %s", err)
-	}  // Setup the client gRPC options
-	//opts := []grpc.DialOption{grpc.WithTransportCredentials(creds)}  // Register ping
-
-
-	opts := []grpc.DialOption{grpc.WithInsecure()}  // Register ping
-
-	err = pb.RegisterTileServiceHandlerFromEndpoint(ctx, mux, grpcAddress, opts)
+	err := pb.RegisterTileServiceHandlerFromEndpoint(ctx, mux, grpcAddress, opts)
 
 	if err != nil {
 		return fmt.Errorf("could not register service Ping: %s", err)
@@ -135,18 +111,18 @@ func startRESTServer(address, grpcAddress, certFile string) error {
 	return nil
 }
 
-func getMongoVendorCollection(dbName, collectionName, mongoHost string )  *mongo.Collection {
+func getMongoVendorCollection(dbName, collectionName, mongoHost string) *mongo.Collection {
 	// Register custom codecs for protobuf Timestamp and wrapper types
 	reg := codecs.Register(bson.NewRegistryBuilder()).Build()
 	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-	mongoClient, err :=  mongo.Connect(ctx, options.Client().ApplyURI(mongoHost), options.Client().SetRegistry(reg))
+	mongoClient, err := mongo.Connect(ctx, options.Client().ApplyURI(mongoHost), options.Client().SetRegistry(reg))
 	if err != nil {
 		log.Fatal(err)
 	}
 	return mongoClient.Database(dbName).Collection(collectionName)
 }
 
-func getRedisClient(redisHost string ) *redis.Client {
+func getRedisClient(redisHost string) *redis.Client {
 	client := redis.NewClient(&redis.Options{
 		Addr:     redisHost,
 		Password: "", // no password set
@@ -159,31 +135,26 @@ func getRedisClient(redisHost string ) *redis.Client {
 	return client
 }
 
-func main()  {
-	//grpcAddress := fmt.Sprintf("%s:%d", "cloudwalker.services.tv", 7771)
-	//restAddress := fmt.Sprintf("%s:%d", "cloudwalker.services.tv", 7772)
+func main() {
 
 	grpcAddress := fmt.Sprintf(":%d", 7773)
 	restAddress := fmt.Sprintf(":%d", 7774)
-	certFile := "cert/server.crt"
-	keyFile := "cert/server.key"
 
 	// fire the gRPC server in a goroutine
 	go func() {
-		err := startGRPCServer(grpcAddress, certFile, keyFile)
+		err := startGRPCServer(grpcAddress)
 		if err != nil {
 			log.Fatalf("failed to start gRPC server: %s", err)
 		}
 	}()
 
-
 	// fire the REST server in a goroutine
 	go func() {
-		err := startRESTServer(restAddress, grpcAddress, certFile)
+		err := startRESTServer(restAddress, grpcAddress)
 		if err != nil {
 			log.Fatalf("failed to start gRPC server: %s", err)
 		}
-	}()  // infinite loop
-	log.Printf("Entering infinite loop")
+	}() // infinite loop
+
 	select {}
 }

@@ -77,7 +77,7 @@
         ]
       }
     },
-    "/content/{vendor}/{brand}/{pageName}/{rowName}": {
+    "/content/{vendor}/{brand}/{pageName}/{rowName}/{rowType}": {
       "get": {
         "operationId": "GetContent",
         "responses": {
@@ -109,6 +109,12 @@
           },
           {
             "name": "rowName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "rowType",
             "in": "path",
             "required": true,
             "type": "string"
@@ -155,7 +161,7 @@
         ]
       }
     },
-    "/row/{vendor}/{brand}/{pageName}/{rowName}": {
+    "/row/{vendor}/{brand}/{pageName}/{rowName}/{rowType}": {
       "get": {
         "operationId": "GetRow",
         "responses": {
@@ -187,6 +193,12 @@
           },
           {
             "name": "rowName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "rowType",
             "in": "path",
             "required": true,
             "type": "string"

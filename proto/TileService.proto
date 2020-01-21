@@ -26,13 +26,13 @@ service TileService{
 
     rpc GetRow(RowRequest) returns (RowResponse){
         option (google.api.http) = {
-                get:"/row/{vendor}/{brand}/{pageName}/{rowName}"
+                get:"/row/{vendor}/{brand}/{pageName}/{rowName}/{rowType}"
         };
     }
 
     rpc GetContent(RowRequest) returns (stream ContentTile){
         option (google.api.http) = {
-                get:"/content/{vendor}/{brand}/{pageName}/{rowName}"
+                get:"/content/{vendor}/{brand}/{pageName}/{rowName}/{rowType}"
         };
     }
 }
@@ -116,6 +116,7 @@ message RowRequest{
     string brand = 2;
     string pageName = 3;
     string rowName = 4;
+    string rowType = 5;
 }
 
 enum RowLayout{
@@ -123,6 +124,12 @@ enum RowLayout{
     Portrait = 1;
     Square = 3;
     Circle = 4;
+}
+
+enum RowType{
+    Editorial = 0;
+    Recommendation  = 1 ;
+    Dynamic  = 2;
 }
 
 

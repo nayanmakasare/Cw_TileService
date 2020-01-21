@@ -358,6 +358,17 @@ func request_TileService_GetRow_0(ctx context.Context, marshaler runtime.Marshal
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "rowName", err)
 	}
 
+	val, ok = pathParams["rowType"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "rowType")
+	}
+
+	protoReq.RowType, err = runtime.String(val)
+
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "rowType", err)
+	}
+
 	msg, err := client.GetRow(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
@@ -418,6 +429,17 @@ func local_request_TileService_GetRow_0(ctx context.Context, marshaler runtime.M
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "rowName", err)
 	}
 
+	val, ok = pathParams["rowType"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "rowType")
+	}
+
+	protoReq.RowType, err = runtime.String(val)
+
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "rowType", err)
+	}
+
 	msg, err := server.GetRow(ctx, &protoReq)
 	return msg, metadata, err
 
@@ -476,6 +498,17 @@ func request_TileService_GetContent_0(ctx context.Context, marshaler runtime.Mar
 
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "rowName", err)
+	}
+
+	val, ok = pathParams["rowType"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "rowType")
+	}
+
+	protoReq.RowType, err = runtime.String(val)
+
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "rowType", err)
 	}
 
 	stream, err := client.GetContent(ctx, &protoReq)
@@ -734,9 +767,9 @@ var (
 
 	pattern_TileService_GetCarousel_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1, 1, 0, 4, 1, 5, 2, 1, 0, 4, 1, 5, 3}, []string{"carousel", "vendor", "brand", "pageName"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_TileService_GetRow_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1, 1, 0, 4, 1, 5, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"row", "vendor", "brand", "pageName", "rowName"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_TileService_GetRow_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1, 1, 0, 4, 1, 5, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5}, []string{"row", "vendor", "brand", "pageName", "rowName", "rowType"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_TileService_GetContent_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1, 1, 0, 4, 1, 5, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"content", "vendor", "brand", "pageName", "rowName"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_TileService_GetContent_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 1, 0, 4, 1, 5, 1, 1, 0, 4, 1, 5, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5}, []string{"content", "vendor", "brand", "pageName", "rowName", "rowType"}, "", runtime.AssumeColonVerbOpt(true)))
 )
 
 var (
